@@ -19,57 +19,54 @@
                 "background": "lightblue",
                 "config": {"view": {"stroke": ""}},
                 "width": 800,
-                "data": {
-                    "values": [
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "All teeth lost", "disease": "all teeth lost"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Obseity", "disease": "obseity"},
-                    {"country": "Vision Disability", "disease": "vison disability"},
-                    {"country": "Vision Disability", "disease": "vison disability"},
-                    {"country": "Vision Disability", "disease": "vison disability"},
-                    {"country": "Vision Disability", "disease": "vison disability"},
-                    {"country": "Vision Disability", "disease": "vison disability"},
-                    {"country": "Vision Disability", "disease": "vison disability"}
-                    ]
-                },
-                "transform": [
-                    {
-                    "calculate": "{'all teeth lost': '🦷','obseity': '🚴🏻', 'vison disability': '🧑‍🦯'}[datum.disease]",
-                    "as": "emoji"
-                    },
-                    {
-                    "window": [{"op": "rank", "as": "rank"}],
-                    "groupby": ["country", "disease"]
-                    }
-                ],
-                "mark": {"type": "text", "baseline": "middle"},
-                "encoding": {
-                    "x": {"field": "rank", "type": "ordinal", "axis": null},
-                    "y": {
-                    "field": "disease",
-                    "type": "nominal",
-                    "axis": null,
-                    "sort": null
-                    },
-                    "row": {
-                    "field": "country",
-                    "header": {"title": "United States Top 3 disease"}
-                    },
-                    "text": {"field": "emoji", "type": "nominal"},
-                    "size": {"value": 65}
-                }
+               "data": {
+    "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv"
+  },
+  "transform": [
+    {
+      "aggregate": [
+        {"op": "sum", "field": "TotalPopulation", "as": "TotalStatePopulation"},
+        {"op": "mean", "field": "Data_Value", "as": "AveragePrevalence"}
+      ],
+      "groupby": ["StateDesc"]
+    }
+  ],
+  "selection": {
+    "grid": {
+      "type": "interval", "bind": "scales"
+    }
+  },
+  "mark": "circle",
+  "encoding": {
+    "x": {
+      "field": "TotalStatePopulation",
+      "type": "quantitative",
+      "title": "Total State Population"
+    },
+    "y": {
+      "field": "AveragePrevalence",
+      "type": "quantitative",
+      "title": "Average Health Condition Prevalence (%)"
+    },
+    "size": {
+      "field": "TotalStatePopulation",
+      "type": "quantitative",
+      "title": "State Population Size"
+    },
+    "color": {
+      "field": "AveragePrevalence",
+      "type": "quantitative",
+      "scale": {"scheme": "reds"},
+      "title": "Average Prevalence of Health Condition"
+    },
+    "tooltip": [
+      {"field": "StateDesc", "type": "nominal", "title": "State"},
+      {"field": "TotalStatePopulation", "type": "quantitative", "title": "Population"},
+      {"field": "AveragePrevalence", "type": "quantitative", "title": "Health Prevalence (%)"}
+    ]
+  },
+  "width": 800,
+  "height": 800
             };
             vegaEmbed("#vega-container1", vegaSpec);
         </script>
