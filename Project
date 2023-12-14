@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Phase-3 Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+    <h1>Think of a heading!!</h1>
+    <h3> <u> <b> Graph 1: Top 3 diseases in United States </b> </u> </h3>
+        <br>
+        <div class="graph-container"> 
+        <div id="vega-container1"></div>
+        <script>
+            const vegaSpec = {
+                "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                "background": "lightblue",
+                "config": {"view": {"stroke": ""}},
+                "width": 800,
+                "data": {
+                    "values": [
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "All teeth lost", "disease": "all teeth lost"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Obseity", "disease": "obseity"},
+                    {"country": "Vision Disability", "disease": "vison disability"},
+                    {"country": "Vision Disability", "disease": "vison disability"},
+                    {"country": "Vision Disability", "disease": "vison disability"},
+                    {"country": "Vision Disability", "disease": "vison disability"},
+                    {"country": "Vision Disability", "disease": "vison disability"},
+                    {"country": "Vision Disability", "disease": "vison disability"}
+                    ]
+                },
+                "transform": [
+                    {
+                    "calculate": "{'all teeth lost': '🦷','obseity': '🚴🏻', 'vison disability': '🧑‍🦯'}[datum.disease]",
+                    "as": "emoji"
+                    },
+                    {
+                    "window": [{"op": "rank", "as": "rank"}],
+                    "groupby": ["country", "disease"]
+                    }
+                ],
+                "mark": {"type": "text", "baseline": "middle"},
+                "encoding": {
+                    "x": {"field": "rank", "type": "ordinal", "axis": null},
+                    "y": {
+                    "field": "disease",
+                    "type": "nominal",
+                    "axis": null,
+                    "sort": null
+                    },
+                    "row": {
+                    "field": "country",
+                    "header": {"title": "United States Top 3 disease"}
+                    },
+                    "text": {"field": "emoji", "type": "nominal"},
+                    "size": {"value": 65}
+                }
+            };
+            vegaEmbed("#vega-container1", vegaSpec);
+        </script>
+        </div>
+        <h4>Description:</h4>
+        <p> Add description</p>
+        <br> <br>
+        <h3><b><u> Graph 2: Distribution of Top 3 Diseases across US </b> </u> </h3>
+        <br>
+        <div class="graph-container"> 
+        <div id="vega-container2"></div>
+        <script>
+          const vegaSpec2 = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "vconcat": [
+                {
+                "width": 600,
+                "height": 500,
+                "title": "Statewise Average Obesity Percentage in the USA",
+                "description": "Average percentage of obese people per state",
+                "data": {
+                    "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv"
+                },
+                "transform": [
+                    {
+                    "filter": "datum.Short_Question_Text === 'Obesity'"
+                    },
+                    {
+                    "aggregate": [{"op": "mean", "field": "Data_Value", "as": "Average_Obesity_Percentage"}],
+                    "groupby": ["id"]
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv",
+                        "format": {
+                            "type": "csv"
+                        }
+                        },
+                        "key": "id",
+                        "fields": ["StateDesc"]
+                    }
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/d3/d3-geo/main/test/data/us-10m.json",
+                        "format": {
+                            "type": "topojson",
+                            "feature": "states"
+                        }
+                        },
+                        "key": "id"
+                    },
+                    "as": "geo"
+                    }
+                ],
+                "projection": {"type": "albersUsa"},
+                "mark": "geoshape",
+                "encoding": {
+                    "shape": {
+                    "field": "geo",
+                    "type": "geojson"
+                    },
+                    "color": {
+                    "field": "Average_Obesity_Percentage",
+                    "type": "quantitative",
+                    "scale": {
+                        "scheme": "reds"
+                    },
+                    "legend": {"title": "Average Obesity Percentage"}
+                    },
+                    "tooltip": [
+                    {"field": "StateDesc", "type": "nominal", "title": "State"},
+                    {"field": "Average_Obesity_Percentage", "type": "quantitative", "title": "Average Obesity %", "format": ".2f"}
+                    ]
+                }
+                },
+                {
+                "width": 600,
+                "height": 500,
+                "title": "Statewise Average Vision Disability Percentage in the USA",
+                "description": "Average percentage of vision disabled people per state",
+                "data": {
+                    "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv"
+                },
+                "transform": [
+                    {
+                    "filter": "datum.Short_Question_Text === 'Vision Disability'"
+                    },
+                    {
+                    "aggregate": [{"op": "mean", "field": "Data_Value", "as": "Average_Vision_Disability_Percentage"}],
+                    "groupby": ["id"]
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv",
+                        "format": {
+                            "type": "csv"
+                        }
+                        },
+                        "key": "id",
+                        "fields": ["StateDesc"]
+                    }
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/d3/d3-geo/main/test/data/us-10m.json",
+                        "format": {
+                            "type": "topojson",
+                            "feature": "states"
+                        }
+                        },
+                        "key": "id"
+                    },
+                    "as": "geo"
+                    }
+                ],
+                "projection": {"type": "albersUsa"},
+                "mark": "geoshape",
+                "encoding": {
+                    "shape": {
+                    "field": "geo",
+                    "type": "geojson"
+                    },
+                    "color": {
+                    "field": "Average_Vision_Disability_Percentage",
+                    "type": "quantitative",
+                    "scale": {
+                        "scheme": "blues"
+                    },
+                    "legend": {"title": "Average Vision Disability Percentage"}
+                    },
+                    "tooltip": [
+                    {"field": "StateDesc", "type": "nominal", "title": "State"},
+                    {"field": "Average_Vision_Disability_Percentage", "type": "quantitative", "title": "Average Vision Disability %", "format": ".2f"}
+                    ]
+                }
+                },
+                {
+                "width": 600,
+                "height": 500,
+                "title": "Statewise Average Percentage of People with All Teeth Lost in the USA",
+                "description": "Average percentage of people with all teeth lost per state",
+                "data": {
+                    "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv"
+                },
+                "transform": [
+                    {
+                    "filter": "datum.Short_Question_Text === 'All Teeth Lost'"
+                    },
+                    {
+                    "aggregate": [{"op": "mean", "field": "Data_Value", "as": "Average_All_Teeth_Lost_Percentage"}],
+                    "groupby": ["id"]
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv",
+                        "format": {
+                            "type": "csv"
+                        }
+                        },
+                        "key": "id",
+                        "fields": ["StateDesc"]
+                    }
+                    },
+                    {
+                    "lookup": "id",
+                    "from": {
+                        "data": {
+                        "url": "https://raw.githubusercontent.com/d3/d3-geo/main/test/data/us-10m.json",
+                        "format": {
+                            "type": "topojson",
+                            "feature": "states"
+                        }
+                        },
+                        "key": "id"
+                    },
+                    "as": "geo"
+                    }
+                ],
+                "projection": {"type": "albersUsa"},
+                "mark": "geoshape",
+                "encoding": {
+                    "shape": {
+                    "field": "geo",
+                    "type": "geojson"
+                    },
+                    "color": {
+                    "field": "Average_All_Teeth_Lost_Percentage",
+                    "type": "quantitative",
+                    "scale": {
+                        "scheme": "greens"
+                    },
+                    "legend": {"title": "Average All Teeth Lost Percentage"}
+                    },
+                    "tooltip": [
+                    {"field": "StateDesc", "type": "nominal", "title": "State"},
+                    {"field": "Average_All_Teeth_Lost_Percentage", "type": "quantitative", "title": "Average People who have lost all teeth %", "format": ".2f"}
+                    ]
+                }
+                }
+            ],
+            "resolve": {
+                "scale": {
+                "color": "independent"
+                }
+            }
+        };
+        vegaEmbed("#vega-container2", vegaSpec2);
+      </script>
+      </div>  
+      <h4>Description:</h4>
+      <p> Add Description</p>
+      <br><br>
+      <h3><b><u> Graph 3: Using a Dropdown to Select Diseases </b> </u> </h3>
+        <br>
+      <div class="graph-container"> 
+      <div id="vega-container3"></div>
+      <script>
+          const vegaSpec3 = {
+            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+            "title": "Statewise Average Percentage of People with Health Condition in the USA",
+            "description": "Interactive map showing average health statistics per state",
+            "vconcat": [
+            {
+                "width": 600,
+                "height": 500,
+                "data": {
+                "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv"
+                },
+                "projection": {"type": "albersUsa"},
+                "selection": {
+                "healthSelect": {
+                    "type": "single",
+                    "fields": ["Short_Question_Text"],
+                    "bind": {
+                    "input": "select",
+                    "options": [ "Chronic Kidney Disease",
+                        "Coronary Heart Disease",
+                        "Arthritis",
+                        "Diabetes"],
+                    "name": "Select Health Condition: "
+                    }
+                }
+                },
+                "transform": [
+                {"filter": {"selection": "healthSelect"}},
+                {
+                    "aggregate": [
+                    {"op": "mean", "field": "Data_Value", "as": "Average_Percentage"}
+                    ],
+                    "groupby": ["id"]
+                },
+                {
+                    "lookup": "id",
+                    "from": {
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/Suryav38/IS445/main/final_further_updated_healthdata4.csv",
+                        "format": {"type": "csv"}
+                    },
+                    "key": "id",
+                    "fields": ["StateDesc"]
+                    }
+                },
+                {
+                    "lookup": "id",
+                    "from": {
+                    "data": {
+                        "url": "https://raw.githubusercontent.com/d3/d3-geo/main/test/data/us-10m.json",
+                        "format": {"type": "topojson", "feature": "states"}
+                    },
+                    "key": "id"
+                    },
+                    "as": "geo"
+                }
+                ],
+                "mark": "geoshape",
+                "encoding": {
+                "shape": {"field": "geo", "type": "geojson"},
+                "color": {
+                    "field": "Average_Percentage",
+                    "type": "quantitative",
+                    "scale": {"scheme": "goldorange"},
+                    "legend": {"title": "Average Percentage"}
+                },
+                "tooltip": [
+                    {"field": "StateDesc", "type": "nominal", "title": "State"},
+                    {"field": "Average_Percentage", "type": "quantitative", "title": "Average Percentage", "format": ".2f"}
+                ]
+                }
+            }
+            ],
+            "resolve": {"scale": {"color": "independent"}}
+        };
+          vegaEmbed("#vega-container3", vegaSpec3);
+      </script>
+      </div>
+</body>
+</html>
